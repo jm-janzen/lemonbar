@@ -137,8 +137,8 @@ class Bar():
 
         st = os.statvfs(os.path.expanduser('~'))
 
-        used  = (st.f_blocks - st.f_bfree) * st.f_frsize / 1.073741824e9
-        total = st.f_blocks * st.f_frsize / 1.073741824e9
+        used  = (st.f_blocks - st.f_bfree) * st.f_frsize
+        total = st.f_blocks * st.f_frsize
         percent_used = used / total * 100
 
         if percent_used > 50:
