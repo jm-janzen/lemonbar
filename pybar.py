@@ -1,4 +1,4 @@
-#!/usr/bin/python -u
+#!/bin/env python3
 
 import os  # For user id, home dir
 import pwd  # For user name
