@@ -1,12 +1,12 @@
 #!/bin/env python3
 
-import os  # For user id, home dir
-import pwd  # For user name
-import time  # For refresh interval
-import psutil  # For memory, cpu usage
-import platform  # For system info
-from datetime import datetime  # For datetime
-from datetime import time as dtime  # For time comparison
+import os
+import pwd
+import time
+import psutil
+import platform
+from datetime import datetime
+from datetime import time as dtime
 
 class Bar():
 
@@ -26,11 +26,9 @@ class Bar():
 
     def build_user_str(self):
 
-        # Get user info
         user_id   = os.getuid()
         user_name = pwd.getpwuid(user_id).pw_name
 
-        # Build conditionally coloured string
         if "work" in user_name:
             built_str = Colo.magenta(user_name)
         else:
@@ -39,22 +37,18 @@ class Bar():
         return built_str
 
     def build_sys_info_str(self):
-        # Set label(s)
         sys_info_label = "OS: "
         if not self.use_labels:
             sys_info_label = ""
 
-        # Get system info
         os_str      = platform.system()
         version_str = platform.release()
         arch_str    = platform.machine()
 
-        # Build string
         sys_info_str = os_str        \
                 + ' ' +  version_str \
                 + ' ' +  arch_str
 
-        # Conditionally colour
         if "ARCH" in sys_info_str.upper():
             sys_info_str = Colo.blue(sys_info_str)
 
@@ -62,15 +56,12 @@ class Bar():
 
 
     def build_cpu_str(self):
-        # Set label(s)
         cpu_label = "CPU: "
         if not self.use_labels:
             cpu_label = ""
 
-        # Get number value
         temp_cpu_num = int(psutil.cpu_percent())
 
-        # Conditionally colour, build string
         if temp_cpu_num > 80:
             built_str = Colo.red(f"{temp_cpu_num}".zfill(2) + '%%')
         elif temp_cpu_num > 50:
@@ -78,17 +69,14 @@ class Bar():
         else:
             built_str = Colo.green(f"{temp_cpu_num}".zfill(2) + '%%')
 
-        # Return built string
         return f"{cpu_label}{built_str}"
 
     def build_mem_str(self):
 
-        # Set label
         mem_label = "MEM: "
         if not self.use_labels:
             mem_label = ""
 
-        # Get numbers
         mem_obj = psutil.virtual_memory()
 
         mem_info = {}
@@ -98,10 +86,8 @@ class Bar():
         mem_info["used"]        = mem_obj[3]
         mem_info["free"]        = mem_obj[4]
 
-        # Perform calculation
         mem_percent_used = int(mem_info["percent"])
 
-        # Conditionally colour and build string
         if float(mem_percent_used) > 80:
             built_str = Colo.red(f"{mem_percent_used}".zfill(2) + '%%')
         if float(mem_percent_used) > 50:
@@ -113,16 +99,13 @@ class Bar():
 
     def build_datetime_str(self):
 
-        # Declare special days
         weekend_days = [ "SAT", "SUN" ]
 
-        # Get date
         today = datetime.today()
         now   = today.time()
         day   = today.strftime("%a").upper()  # Day of week, short
         weekday_label = day + " : "
 
-        # Conditionally colour and label
         if self.use_labels:
             if day in weekend_days:
                 datetime_label = "WKND: "
@@ -142,26 +125,22 @@ class Bar():
         else:
             datetime_label = ""
 
-        # Build string
         datetime_str = datetime_label + today.strftime("%Y-%m-%d %H:%M:%S")
 
         return datetime_str
 
     def build_disk_str(self):
         """ Returns used over available GB for user """
-        # Set label
         disk_label = "DSK: "
         if not self.use_labels:
             disk_label = ""
 
         st = os.statvfs(os.path.expanduser('~'))
 
-        # Get numbers
         used  = (st.f_blocks - st.f_bfree) * st.f_frsize / 1.073741824e9
         total = st.f_blocks * st.f_frsize / 1.073741824e9
         percent_used = used / total * 100
 
-        # Conditionally colour and build string
         if percent_used > 50:
             built_str = Colo.yellow("{:.0f}".format(percent_used) + '%%')
         elif percent_used > 80:
