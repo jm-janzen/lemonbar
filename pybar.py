@@ -251,6 +251,6 @@ def main():
         bar_right = bar.wrap([ bar.build_cpu_str(), bar.build_mem_str(), bar.build_disk_str(), bar.build_datetime_str() ])
         bar_full  = bar.left(bar_left) + bar.right(bar_right)
 
-        print(bar_full)
+        print(bar_full, flush=True)
         time.sleep(interval)
 main()
